@@ -18,8 +18,9 @@ fi
 CERT_LOCATION='/etc/letsencrypt/live'
 
 DOMAINS=($DOMAINS)
-
 DOMAIN=${DOMAINS[0]}
+
+HAPROXYKEY=$(cat $CERT_LOCATION/$DOMAIN/fullchain.pem $CERT_LOCATION/$DOMAIN/privkey.pem | base64 --wrap=0)
 
 CERT=$(cat $CERT_LOCATION/$DOMAIN/fullchain.pem | base64 --wrap=0)
 KEY=$(cat $CERT_LOCATION/$DOMAIN/privkey.pem | base64 --wrap=0)
@@ -38,6 +39,7 @@ cat << EOF | kubectl $ACTION -f -
  "data": {
    "proxycert": "$CERT",
    "proxykey": "$KEY",
+   "haproxykey": "$HAPROXYKEY",
    "dhparam": "$DHPARAM"
  }
 }
